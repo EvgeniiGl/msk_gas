@@ -1,0 +1,22 @@
+{
+    "name": "moskov/gas-queue-bot",
+    "description": "Telegram bot for gas station queues",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "ext-phalcon": "*",
+        "ext-pdo": "*",
+        "ext-pgsql": "*",
+        "guzzlehttp/guzzle": "^7.8",
+        "longman/telegram-bot": "^0.83"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
