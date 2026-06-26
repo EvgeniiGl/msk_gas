@@ -1,48 +1,51 @@
 -- migrations/001_create_queues.sql
+-- Очереди на АЗС (Telegram, топик "Очереди")
 
 BEGIN;
 
 -- Справочник АЗС (брендов)
 CREATE TABLE IF NOT EXISTS brands (
                                       id          SMALLSERIAL PRIMARY KEY,
-                                      name        VARCHAR(100) NOT NULL UNIQUE
+                                      name        VARCHAR(100) NOT NULL UNIQUE,
+    sort_order  SMALLINT NOT NULL DEFAULT 0
     );
 
-INSERT INTO brands (name) VALUES
-                              ('Лукойл (Lukoil)'),
-                              ('Газпромнефть'),
-                              ('Роснефть'),
-                              ('Газпром'),
-                              ('Татнефть'),
-                              ('Башнефть'),
-                              ('Тебойл (Teboil)'),
-                              ('ТНК Трасса'),
-                              ('ЕКА'),
-                              ('Нефтьмагистраль'),
-                              ('ОРТК'),
-                              ('Эверон'),
-                              ('Транс-АЗС'),
-                              ('Грейтек'),
-                              ('Вектор'),
-                              ('Магистраль'),
-                              ('Нева-Ойл'),
-                              ('Калина Ойл'),
-                              ('EKA Shell'),
-                              ('BP')
+INSERT INTO brands (name, sort_order) VALUES
+                                          ('Лукойл (Lukoil)', 1),
+                                          ('Газпромнефть', 2),
+                                          ('Роснефть', 3),
+                                          ('Газпром', 4),
+                                          ('Татнефть', 5),
+                                          ('Башнефть', 6),
+                                          ('Тебойл (Teboil)', 7),
+                                          ('ТНК Трасса', 8),
+                                          ('ЕКА', 9),
+                                          ('Нефтьмагистраль', 10),
+                                          ('ОРТК', 11),
+                                          ('Эверон', 12),
+                                          ('Транс-АЗС', 13),
+                                          ('Грейтек', 14),
+                                          ('Вектор', 15),
+                                          ('Магистраль', 16),
+                                          ('Нева-Ойл', 17),
+                                          ('Калина Ойл', 18),
+                                          ('EKA Shell', 19),
+                                          ('BP', 20)
     ON CONFLICT (name) DO NOTHING;
 
 -- Типы топлива (для мультивыбора)
 CREATE TABLE IF NOT EXISTS fuel_types (
                                           id          SMALLSERIAL PRIMARY KEY,
-                                          code        VARCHAR(20) NOT NULL UNIQUE
+                                          code        VARCHAR(20) NOT NULL UNIQUE,
+    sort_order  SMALLINT NOT NULL DEFAULT 0
     );
 
-INSERT INTO fuel_types (code) VALUES
-                                  ('АИ-92'),
-                                  ('АИ-95'),
-                                  ('АИ-98'),
-                                  ('АИ-100'),
-                                  ('дизель')
+INSERT INTO fuel_types (code, sort_order) VALUES
+                                              ('АИ-92', 1),
+                                              ('АИ-95', 2),
+                                              ('АИ-98', 3),
+                                              ('АИ-100', 4),
+                                              ('дизель', 5)
     ON CONFLICT (code) DO NOTHING;
 
 -- Основная таблица записей очередей
@@ -65,10 +68,12 @@ CREATE TABLE IF NOT EXISTS queue_entry_fuels (
     PRIMARY KEY (entry_id, fuel_type_id)
     );
 
--- Состояние пошагового диалога (FSM) для каждого пользователя
+-- Состояние пошагового диалога (FSM) для каждого пользователя.
+-- Хранится в БД, т.к. PHP-FPM воркеры не разделяют память между запросами.
 CREATE TABLE IF NOT EXISTS user_states (
                                            tg_user_id      BIGINT PRIMARY KEY,
                                            chat_id         BIGINT NOT NULL,
+                                           thread_id       BIGINT,                   -- message_thread_id топика
                                            step            VARCHAR(30) NOT NULL,     -- brand|address|working|fuels|queue
     draft           JSONB NOT NULL DEFAULT '{}'::jsonb,
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
