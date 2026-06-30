@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\Bot\Telegram;
+use App\bot\Telegram;
 
 $config = require __DIR__ . '/../app/config.php';
 $tg = new Telegram($config['bot']['token']);
