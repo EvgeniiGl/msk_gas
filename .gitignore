@@ -3,3 +3,4 @@ db_data
 .idea
 composer.lock
 vendor/
+docker/nginx/ssl/
