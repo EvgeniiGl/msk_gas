@@ -8,9 +8,9 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\Bot\Db;
-use App\Bot\Telegram;
-use App\Bot\Handler;
+use App\bot\Db;
+use App\bot\Telegram;
+use App\bot\Handler;
 
 $config = require __DIR__ . '/../app/config.php';
 
