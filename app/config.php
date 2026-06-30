@@ -16,7 +16,7 @@ return [
     ],
     'db' => [
         'host'     => getenv('DB_HOST') ?: 'postgres',
-        'port'     => (int)(getenv('DB_PORT') ?: 5432),
+        'port'     => 5432,
         'dbname'   => getenv('DB_NAME') ?: 'app',
         'user'     => getenv('DB_USER') ?: 'app',
         'password' => getenv('DB_PASSWORD') ?: '',
