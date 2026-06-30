@@ -1,3 +1,5 @@
 db_data
 .env
 .idea
+composer.lock
+vendor/
